@@ -3,9 +3,10 @@ import { compile, NetworkProvider } from '@ton/blueprint';
 import { NftCollectionEditable, NftCollectionEditableConfig } from '../wrappers/NftCollectionEditable';
 import fs from 'fs';
 import { isPinataArtifact } from '../wrappers/PinataArtifact';
+import './setup';
 
 export async function run(provider: NetworkProvider) {
-    const pinataArtifact = fs.readFileSync('artifact.pinata.json', 'utf-8');
+    const pinataArtifact = JSON.parse(fs.readFileSync('artifact.pinata.json', 'utf-8'));
 
     if (!isPinataArtifact(pinataArtifact)) {
         throw new Error('Invalid artifact');
@@ -25,8 +26,8 @@ export async function run(provider: NetworkProvider) {
         royaltyPercent: 0.05, // 0.05 = 5%
         royaltyAddress: senderAddress,
         nextItemIndex: 0,
-        collectionContentUrl: `ipfs://${pinataArtifact.metadata}/collection.json`,
-        commonContentUrl: `ipfs://${pinataArtifact.metadata}/`,
+        collectionContentUrl: `https://gateway.pinata.cloud/ipfs/${pinataArtifact.metadata}/collection.json`,
+        commonContentUrl: `https://gateway.pinata.cloud/ipfs/${pinataArtifact.metadata}/`,
     };
 
     const nftCollection = provider.open(

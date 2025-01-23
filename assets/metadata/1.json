@@ -1,6 +1,6 @@
 {
     "name": "Duck #01",
     "description": "Let's read some news...",
-    "image": "ipfs://QmYbUB1zqkL1oykhENBEPkzX9GUDHSSXw1Jt5A1hWEDNJQ/1.jpg",
+    "image": "https://gateway.pinata.cloud/ipfs/QmYbUB1zqkL1oykhENBEPkzX9GUDHSSXw1Jt5A1hWEDNJQ/1.png",
     "attributes": [{ "trait_type": "Awesomeness", "value": "Cool" }]
 }

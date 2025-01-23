@@ -18,16 +18,21 @@ async function uploadFolderToIPFS(folderPath: string): Promise<string> {
 async function updateMetadataFiles(metadataFolderPath: string, imagesIpfsHash: string): Promise<void> {
     const files = readdirSync(metadataFolderPath);
 
-    files.forEach(async (filename, index) => {
+    let index = 0;
+    for (const filename of files) {
         const filePath = path.join(metadataFolderPath, filename);
         const file = await readFile(filePath);
 
         const metadata = JSON.parse(file.toString());
         metadata.image =
-            index != files.length - 1 ? `ipfs://${imagesIpfsHash}/${index}.jpg` : `ipfs://${imagesIpfsHash}/logo.jpg`;
+            index != files.length - 1
+                ? `https://gateway.pinata.cloud/ipfs/${imagesIpfsHash}/${index}.png`
+                : `https://gateway.pinata.cloud/ipfs/${imagesIpfsHash}/logo.png`;
 
         await writeFile(filePath, JSON.stringify(metadata));
-    });
+
+        index += 1;
+    }
 }
 
 async function deployAssets() {

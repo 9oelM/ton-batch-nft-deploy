@@ -1,6 +1,6 @@
 {
     "name": "Duck #00",
     "description": "What about a round of golf?",
-    "image": "ipfs://QmYbUB1zqkL1oykhENBEPkzX9GUDHSSXw1Jt5A1hWEDNJQ/0.jpg",
+    "image": "https://gateway.pinata.cloud/ipfs/QmYbUB1zqkL1oykhENBEPkzX9GUDHSSXw1Jt5A1hWEDNJQ/0.png",
     "attributes": [{ "trait_type": "Awesomeness", "value": "Super cool" }]
 }

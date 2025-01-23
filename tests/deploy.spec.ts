@@ -191,10 +191,16 @@ describe('Batch deploy test', () => {
             // Starts from 0
             const batch = Array.from({ length: batchCount }, (_, i) => i);
             const nftItemContents: NftCollectionContent[] = [];
-            const uriContent = beginCell().storeBuffer(Buffer.from('https://example.com/nft1.json')).endCell();
+            const uriContent = beginCell()
+                .storeBuffer(
+                    Buffer.from(
+                        'https://gateway.pinata.cloud/ipfs/QmYbUB1zqkL1oykhENBEPkzX9GUDHSSXw1Jt5A1hWEDNJQ/0.png',
+                    ),
+                )
+                .endCell();
             for (const i of batch) {
                 const nftItemContentCell: NftCollectionContent = {
-                    uri: 'https://example.com/nft1.json',
+                    uri: 'https://gateway.pinata.cloud/ipfs/QmYbUB1zqkL1oykhENBEPkzX9GUDHSSXw1Jt5A1hWEDNJQ/0.png',
                     itemOwnerAddress: (await blockchain.treasury(`itemOwner` + i)).address,
                 };
 
@@ -206,9 +212,7 @@ describe('Batch deploy test', () => {
             // Mint the NFT
             const mintResult = await nftCollectionEditable.sendBatchMint(deployer.getSender(), {
                 nftItemContents: nftItemContents,
-                itemIndex: initialCollectionData.nextItemIndex,
-                itemAmount,
-                batchCount,
+                eachItemTONAmount: itemAmount,
             });
 
             const successTx = findTransaction(mintResult.transactions, {

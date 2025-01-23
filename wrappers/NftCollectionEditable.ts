@@ -134,10 +134,8 @@ export class NftCollectionEditable implements Contract {
         provider: ContractProvider,
         via: Sender,
         params: {
-            batchCount: number;
             nftItemContents: NftCollectionContent[];
-            itemIndex: number | bigint;
-            itemAmount: bigint;
+            eachItemTONAmount: bigint;
         },
     ) {
         const batchCount = params.nftItemContents.length;
@@ -147,23 +145,23 @@ export class NftCollectionEditable implements Contract {
             throw new Error('Duplicate owner addresses. Each owner should be unique');
         }
 
-        const minValue = BigInt(batchCount) * params.itemAmount + toNano('0.05');
+        const minValue = BigInt(batchCount) * params.eachItemTONAmount + toNano('0.5');
 
         console.log(
-            `Sending ${fromNano(minValue)} TON to deploy ${params.batchCount} NFTs (each ${fromNano(
-                params.itemAmount,
+            `Sending ${fromNano(minValue)} TON to deploy ${batchCount} NFTs (each ${fromNano(
+                params.eachItemTONAmount,
             )} TON)`,
         );
 
-        if (params.batchCount > NftCollectionEditable.BATCH_DEPLOY_LIMIT) {
+        if (batchCount > NftCollectionEditable.BATCH_DEPLOY_LIMIT) {
             throw new Error(`Batch count exceeds the limit: ${NftCollectionEditable.BATCH_DEPLOY_LIMIT}`);
         }
         const deployList = Dictionary.empty<bigint, Cell>(Dictionary.Keys.BigInt(64), Dictionary.Values.Cell());
 
-        for (let i = 0; i < params.batchCount; i++) {
+        for (let i = 0; i < batchCount; i++) {
             const content = NftCollectionEditable.nftContentToCell(params.nftItemContents[i]);
 
-            const mintBody = beginCell().storeCoins(params.itemAmount).storeRef(content).endCell();
+            const mintBody = beginCell().storeCoins(params.eachItemTONAmount).storeRef(content).endCell();
 
             deployList.set(BigInt(i), mintBody);
         }

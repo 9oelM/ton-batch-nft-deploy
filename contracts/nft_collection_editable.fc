@@ -13,6 +13,80 @@
 ;;           nft_item_code:^Cell
 ;;           royalty_params:^RoyaltyParams
 ;;           = Storage;
+forall X -> int cast_to_int(X x) asm "NOP";
+
+cell outer(
+  int bounceable,
+  slice dest,
+  int value,
+  cell msg_body
+) impure inline {
+  cell msg = begin_cell()
+    .store_uint(
+      ;; 0b 0 1 0 0 00: Non-Bounceable.
+      bounceable ? 0x18 : 0x10,
+      ;; int_msg_info$0
+      1
+      ;; ihr_disabled:Bool
+      + 1 
+      ;; bounce:Bool
+      + 1
+      ;; bounced:Bool
+      + 1 
+      ;; src:MsgAddress
+      + 2
+    )
+    ;; dest:MsgAddressInt
+    .store_slice(dest)
+    ;; grams:Grams
+    .store_coins(value)
+    .store_uint(
+      ;;0b00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001
+      1,
+      ;; other:ExtraCurrencyCollection = 0b0
+      1
+      ;; ihr_fee:Grams = 0b0000
+      + 4 
+      ;; fwd_fee:Grams = 0b0000
+      + 4 
+      ;; created_lt:uint64 = 0x0000000000000000
+      + 64
+      ;; created_at:uint32 = 0x00000000
+      + 32 
+      ;; init: Maybe... = 0b0
+      + 1
+      ;; body: body:(Either X ^X) = 0b1
+      + 1
+    )
+    .store_ref(msg_body)
+    .end_cell();
+
+  return msg;
+}
+
+() return_excess_toncoin_to_user_wallet(
+  int op,
+  int error_code,
+  slice user_wallet_address
+) impure inline {
+  cell msg_body = begin_cell()
+    .store_uint(op, 32)
+    .store_uint(error_code, 32)
+    .end_cell();
+
+  cell msg = outer(
+    0, ;; bounceable (false)
+    user_wallet_address, ;; destination
+    0, ;; value 
+    msg_body
+  );
+
+  send_raw_message(
+    msg, 
+    64 ;; carry all gas
+  );
+}
+
 
 (slice, int, cell, cell, cell) load_data() inline {
   var ds = get_data().begin_parse();
@@ -110,37 +184,47 @@ slice calculate_nft_item_address(int wc, cell state_init) {
       return ();
     }
     if (op == 2) { ;; batch deploy of new nfts
-      ;; int counter = -1;
-      cell deploy_list = in_msg_body~load_dict();
-      int deploy_list_length = in_msg_body~load_uint(64);
+      try {
+        ;; int counter = -1;
+        cell deploy_list = in_msg_body~load_dict();
+        int deploy_list_length = in_msg_body~load_uint(64);
 
-      if (deploy_list_length > 250) {
-        throw(398);
-      }
-
-      int deployed_index = 0;
-      int has_next = -1;
-
-      while ((deployed_index < deploy_list_length) & has_next) {
-        (cell item_ref, has_next) = deploy_list.udict_get_ref?(64, deployed_index);
-        if (has_next) {
-          slice item = item_ref.begin_parse();
-          int amount = item~load_coins();
-          cell nft_content = item~load_ref();
-          item.end_parse();
-      
-          if (deployed_index >= 250) { ;; Limit due to limits of action list size
-            throw(399);
-          }
-
-          deploy_nft_item(next_item_index, nft_item_code, amount, nft_content);
-
-          next_item_index += 1;
+        if (deploy_list_length > 250) {
+          throw(398);
         }
-        deployed_index += 1;
-      }
 
-      save_data(owner_address, next_item_index, content, nft_item_code, royalty_params);
+        int deployed_index = 0;
+        int has_next = -1;
+
+        while ((deployed_index < deploy_list_length) & has_next) {
+          (cell item_ref, has_next) = deploy_list.udict_get_ref?(64, deployed_index);
+          if (has_next) {
+            slice item = item_ref.begin_parse();
+            int amount = item~load_coins();
+            cell nft_content = item~load_ref();
+            item.end_parse();
+        
+            if (deployed_index >= 250) { ;; Limit due to limits of action list size
+              throw(399);
+            }
+
+            deploy_nft_item(next_item_index, nft_item_code, amount, nft_content);
+
+            next_item_index += 1;
+          }
+          deployed_index += 1;
+        }
+
+        save_data(owner_address, next_item_index, content, nft_item_code, royalty_params);
+      } catch (_, error_code) {
+        int error_code = error_code.cast_to_int();
+
+        return_excess_toncoin_to_user_wallet(
+          2, 
+          error_code, 
+          sender_address
+        );
+      }
       return ();
     }
     if (op == 3) { ;; change owner

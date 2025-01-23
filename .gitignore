@@ -18,3 +18,4 @@ Session.vim
 .env
 artifact.pinata.json
 
+.env.testnet
