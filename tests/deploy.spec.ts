@@ -1,6 +1,5 @@
 import { Blockchain, SandboxContract, TreasuryContract } from '@ton/sandbox';
 import { Cell, toNano } from '@ton/core';
-import { BatchNFT } from '../wrappers/BatchNFT';
 import '@ton/test-utils';
 import { compile } from '@ton/blueprint';
 

@@ -14,3 +14,7 @@ dist
 
 # VIM
 Session.vim
+
+.env
+artifact.pinata.json
+
