@@ -1,6 +1,6 @@
 # ton-batch-nft-deploy
 
-_Nobody_. Nobody on this planet has published a code or a tutorial to use a batch deploy of multiple NFTs from a single message on TON. This repository serves as an example of how to do so. Batch deploy significantly decreases the gas fee. For a single mint, around 0.08 TON is required.
+_Nobody_. Nobody on this planet has published a code or a tutorial to run a batch deploy of multiple NFTs from a single message on TON. This repository serves as an example of how to do so. Batch deploy significantly decreases the gas fee. For a single mint, around 0.08 TON is required.
 
 If you use this project, around 1.0 to 1.5 TON are required for minting 50 NFTs. That's 1 / 50 = 0.02 to 1.5 / 50 = 0.03 TON per NFT. Here's an example tx that does that: https://testnet.tonviewer.com/transaction/32f380a7f4f2d6a3d085619ec1cf6e3caaa30ec9c781d389331f07d4cda6e4b3
 
