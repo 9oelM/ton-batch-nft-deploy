@@ -27,7 +27,7 @@ export async function run(provider: NetworkProvider) {
      *
      * @@@@@@@@@
      */
-    const collectionAddress = Address.parse(`0:a49759da7145aa3459b1c92195c8fad443491659fa0ad0ede0b95ec1038b16e5`);
+    const collectionAddress = Address.parse(`0:6df1823b32e72364ed253c231575b56e41a53264f778c01bcb9950acb33b31ff`);
     const batchSize = 50;
 
     const nftCollection = provider.open(NftCollectionEditable.createFromAddress(collectionAddress));

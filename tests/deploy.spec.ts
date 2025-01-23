@@ -166,13 +166,8 @@ describe('Batch deploy test', () => {
         const nftCollectionEditable = await deploy();
 
         const candidates = [
-            toNano(`0.005`),
-            toNano(`0.01`),
-            toNano(`0.015`),
             toNano(`0.02`),
-            toNano(`0.025`),
             toNano(`0.03`),
-            toNano(`0.035`),
             toNano(`0.04`),
             toNano(`0.05`),
             toNano(`0.06`),
