@@ -110,23 +110,36 @@ slice calculate_nft_item_address(int wc, cell state_init) {
       return ();
     }
     if (op == 2) { ;; batch deploy of new nfts
-      int counter = 0;
-      cell deploy_list = in_msg_body~load_ref();
-      do {
-        var (item_index, item, f?) = deploy_list~udict::delete_get_min(64);
-        if (f?) {
-          counter += 1;
-          if (counter >= 250) { ;; Limit due to limits of action list size
+      ;; int counter = -1;
+      cell deploy_list = in_msg_body~load_dict();
+      int deploy_list_length = in_msg_body~load_uint(64);
+
+      if (deploy_list_length > 250) {
+        throw(398);
+      }
+
+      int deployed_index = 0;
+      int has_next = -1;
+
+      while ((deployed_index < deploy_list_length) & has_next) {
+        (cell item_ref, has_next) = deploy_list.udict_get_ref?(64, deployed_index);
+        if (has_next) {
+          slice item = item_ref.begin_parse();
+          int amount = item~load_coins();
+          cell nft_content = item~load_ref();
+          item.end_parse();
+      
+          if (deployed_index >= 250) { ;; Limit due to limits of action list size
             throw(399);
           }
 
-          throw_unless(403 + counter, item_index <= next_item_index);
-          deploy_nft_item(item_index, nft_item_code, item~load_coins(), item~load_ref());
-          if (item_index == next_item_index) {
-            next_item_index += 1;
-          }
+          deploy_nft_item(next_item_index, nft_item_code, amount, nft_content);
+
+          next_item_index += 1;
         }
-      } until ( ~ f?);
+        deployed_index += 1;
+      }
+
       save_data(owner_address, next_item_index, content, nft_item_code, royalty_params);
       return ();
     }

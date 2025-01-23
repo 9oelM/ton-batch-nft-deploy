@@ -5,7 +5,7 @@ import fs from 'fs';
 import { isPinataArtifact } from '../wrappers/PinataArtifact';
 
 export async function run(provider: NetworkProvider) {
-    const pinataArtifact = fs.readFileSync('artifact.pinata.json', 'utf-8')
+    const pinataArtifact = fs.readFileSync('artifact.pinata.json', 'utf-8');
 
     if (!isPinataArtifact(pinataArtifact)) {
         throw new Error('Invalid artifact');
@@ -27,13 +27,10 @@ export async function run(provider: NetworkProvider) {
         nextItemIndex: 0,
         collectionContentUrl: `ipfs://${pinataArtifact.metadata}/collection.json`,
         commonContentUrl: `ipfs://${pinataArtifact.metadata}/`,
-    }
+    };
 
     const nftCollection = provider.open(
-        NftCollectionEditable.createFromConfig(
-            nftCollectionConfig,
-            nftCollectionEditableCode,
-        ),
+        NftCollectionEditable.createFromConfig(nftCollectionConfig, nftCollectionEditableCode),
     );
     await nftCollection.sendDeploy(provider.sender(), toNano('0.05'));
     await provider.waitForDeploy(nftCollection.address);

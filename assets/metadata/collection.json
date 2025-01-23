@@ -1,1 +1,6 @@
-{"name":"Ducks","description":"This collection is created for showing an example of minting NFT collection on TON. You can support creator by bying one of this NFT.","image":"ipfs://QmYbUB1zqkL1oykhENBEPkzX9GUDHSSXw1Jt5A1hWEDNJQ/logo.jpg","social_links":["https://t.me/official_Tonament_bot"]}
+{
+    "name": "Ducks",
+    "description": "This collection is created for showing an example of minting NFT collection on TON. You can support creator by bying one of this NFT.",
+    "image": "ipfs://QmYbUB1zqkL1oykhENBEPkzX9GUDHSSXw1Jt5A1hWEDNJQ/logo.jpg",
+    "social_links": ["https://t.me/official_Tonament_bot"]
+}

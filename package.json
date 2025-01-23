@@ -8,6 +8,7 @@
         "build:nft-item": "blueprint build -- NftItem",
         "build:all": "npm run build:nft-collection-editable && npm run build:nft-item",
         "deploy:assets": "npx ts-node scripts/deploy_assets.ts",
+        "deploy:collection": "npx ts-node scripts/deploy_collection.ts",
         "test": "jest --verbose"
     },
     "devDependencies": {
