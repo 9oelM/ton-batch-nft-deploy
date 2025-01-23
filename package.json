@@ -4,6 +4,9 @@
     "scripts": {
         "start": "blueprint run",
         "build": "blueprint build",
+        "build:nft-collection-editable": "blueprint build -- NftCollectionEditable",
+        "build:nft-item": "blueprint build -- NftItem",
+        "build:all": "npm run build:nft-collection-editable && npm run build:nft-item",
         "test": "jest --verbose"
     },
     "devDependencies": {
